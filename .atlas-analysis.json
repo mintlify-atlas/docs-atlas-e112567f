@@ -1,0 +1,104 @@
+{
+  "projectType": "saas",
+  "projectName": "Courser",
+  "projectDescription": "Courser is an AI-powered platform that lets professors build course-specific chatbots trained on lecture videos, enabling students to get instant, cited answers to their questions.",
+  "theme": "almond",
+  "primaryColor": "#fac94a",
+  "lightColor": "#6a2715",
+  "darkColor": "#e0e7e9",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "For Professors",
+            "pages": [
+              "professors/creating-a-chatbot",
+              "professors/managing-courses",
+              "professors/customizing-your-chatbot",
+              "professors/embedding-chatbot"
+            ]
+          },
+          {
+            "group": "For Students",
+            "pages": [
+              "students/asking-questions",
+              "students/understanding-citations"
+            ]
+          },
+          {
+            "group": "Self-Hosting",
+            "pages": [
+              "self-hosting/overview",
+              "self-hosting/environment-variables"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api/overview", "api/authentication"]
+          },
+          {
+            "group": "Auth",
+            "pages": [
+              "api/auth/google",
+              "api/auth/signup-email",
+              "api/auth/login-email",
+              "api/auth/is-logged-in"
+            ]
+          },
+          {
+            "group": "Chatbot",
+            "pages": [
+              "api/chatbot/chat",
+              "api/chatbot/create",
+              "api/chatbot/dataset-count",
+              "api/chatbot/dataset-export"
+            ]
+          },
+          {
+            "group": "Course",
+            "pages": [
+              "api/course/get-all-courses",
+              "api/course/get-course",
+              "api/course/update-course"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "AI chatbots trained on YouTube lecture videos with automatic transcript processing",
+    "Cited answers with timestamped links back to the exact lecture moment",
+    "Embeddable chatbot widget for integration with LMS platforms like Canvas",
+    "Customizable chatbot appearance including colors, background image, and placeholder text",
+    "Bring-your-own OpenAI API key per course",
+    "Conversation history export as CSV for analysis",
+    "Email and Google OAuth authentication",
+    "Vector similarity search via Pinecone for semantically relevant context retrieval"
+  ],
+  "publicApiSurface": [
+    "POST /auth/google",
+    "POST /auth/signup-email",
+    "POST /auth/login-email",
+    "GET /auth/isloggedin",
+    "POST /chatbot/chat",
+    "POST /chatbot/create",
+    "GET /chatbot/:courseId/dataset/count",
+    "GET /chatbot/:courseId/dataset/export",
+    "GET /course/getAllCourses",
+    "GET /course/getCourse/:courseID",
+    "POST /course/update",
+    "GET /course/getCourseProtected/:courseID"
+  ]
+}
