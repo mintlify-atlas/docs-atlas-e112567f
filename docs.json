@@ -83,6 +83,7 @@
             "pages": [
               "api/course/get-all-courses",
               "api/course/get-course",
+              "api/course/get-course-protected",
               "api/course/update-course"
             ]
           }

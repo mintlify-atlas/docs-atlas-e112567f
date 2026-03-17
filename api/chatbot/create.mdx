@@ -66,7 +66,7 @@ This endpoint performs heavy background work: downloading YouTube captions and b
       Array of Transcription document IDs referencing the processed YouTube videos.
     </ResponseField>
     <ResponseField name="sourceFiles" type="string[]">
-      Array of source file paths or identifiers used during ingestion.
+      Array of Source document IDs (MongoDB ObjectIds) for the processed YouTube videos. Each entry references a Source document containing the transcript chunks and embeddings.
     </ResponseField>
     <ResponseField name="openAIKey" type="string">
       Custom OpenAI API key for this course, if set. Empty string if using the platform default.

@@ -1,14 +1,20 @@
 ---
-title: Get course
-description: Retrieve a course by its ID. This is the public endpoint used by the embeddable chatbot widget.
-api: GET /course/getCourse/{courseID}
+title: Get course (authenticated)
+description: Retrieve a course by its ID with authentication required.
+api: GET /course/getCourseProtected/{courseID}
 ---
 
-Returns a single course by ID. This is a public endpoint — no authentication is required.
+Returns a single course by ID. Unlike `GET /course/getCourse/:courseID`, this endpoint requires authentication. Use it when you need to fetch full course details in a context where a valid session is already available.
 
 <Note>
-This is the endpoint used by the embeddable chatbot widget to load course configuration (name, color, placeholder text, background image, and instructions) before rendering.
+Both this endpoint and `GET /course/getCourse/:courseID` return the same course object. The difference is that this endpoint verifies the caller's JWT token first.
 </Note>
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  A valid JWT token obtained from any auth endpoint.
+</ParamField>
 
 ## Path parameters
 
@@ -31,7 +37,7 @@ Returns the course object directly (not wrapped in a key).
 </ResponseField>
 
 <ResponseField name="instructions" type="string">
-  The AI system prompt used by the course chatbot.
+  The AI system prompt used by the course chatbot. Defaults to `"You are a helpful AI assistant for a University classroom that answers questions for students about this course"`.
 </ResponseField>
 
 <ResponseField name="color" type="string">
@@ -66,13 +72,18 @@ Returns the course object directly (not wrapped in a key).
   Custom OpenAI API key for this course, if set. Empty string if using the platform default.
 </ResponseField>
 
+### 401 — Unauthorized
+
+Returned if the auth header is missing, the token is invalid, or no user is found for the token.
+
 ## Example
 
 <CodeGroup>
 
 ```bash cURL
 curl --request GET \
-  --url http://localhost:8000/course/getCourse/64f1a2b3c4d5e6f7a8b9c0d1
+  --url http://localhost:8000/course/getCourseProtected/64f1a2b3c4d5e6f7a8b9c0d1 \
+  --header "x-access'courser-auth-token: <your_jwt_token>"
 ```
 
 </CodeGroup>
@@ -86,9 +97,9 @@ curl --request GET \
   "placeholder": "What is significant about horseshoe crabs",
   "backgroundImg": "https://res.cloudinary.com/dlk3ezbal/image/upload/v1699589098/jqmlca7vhr0cnzgdbaah.png",
   "openAIAssistantID": "asst_abc123xyz",
-  "openAIFiles": ["file-abc123"],
-  "transcriptions": ["64f1a2b3c4d5e6f7a8b9c0d2"],
-  "sourceFiles": [],
+  "openAIFiles": [],
+  "transcriptions": [],
+  "sourceFiles": ["64f1a2b3c4d5e6f7a8b9c0d2"],
   "openAIKey": ""
 }
 ```

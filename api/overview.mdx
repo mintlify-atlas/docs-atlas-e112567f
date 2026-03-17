@@ -52,13 +52,19 @@ Tokens are valid for **1000 days** from the time of issue. See the [Authenticati
 
 | Method | Path | Auth required | Description |
 |--------|------|--------------|-------------|
-| — | — | — | See Chatbot API reference |
+| `POST` | `/chatbot/chat` | No | Send a question to a course chatbot and get a cited answer |
+| `POST` | `/chatbot/create` | Yes | Create a new chatbot from YouTube lecture URLs |
+| `GET` | `/chatbot/:courseId/dataset/count` | Yes | Get the total conversation count for a course |
+| `GET` | `/chatbot/:courseId/dataset/export` | Yes | Download recent conversations as a CSV file |
 
 ### Course — `/course/*`
 
 | Method | Path | Auth required | Description |
 |--------|------|--------------|-------------|
-| — | — | — | See Course API reference |
+| `GET` | `/course/getAllCourses` | Yes | Get all courses belonging to the authenticated user |
+| `GET` | `/course/getCourse/:courseID` | No | Get a course by ID (public — used by the chatbot widget) |
+| `POST` | `/course/update` | Yes | Update a course's settings, including image upload |
+| `GET` | `/course/getCourseProtected/:courseID` | Yes | Get a course by ID (authenticated version) |
 
 ## Error responses
 
@@ -70,14 +76,14 @@ Tokens are valid for **1000 days** from the time of issue. See the [Authenticati
 
 ## API sections
 
-<Columns cols={3}>
+<CardGroup cols={3}>
   <Card title="Auth" icon="key" href="/api/authentication">
     JWT authentication, token acquisition, and user session management.
   </Card>
-  <Card title="Chatbot" icon="message-circle" href="/api/chatbot">
+  <Card title="Chatbot" icon="message-circle" href="/api/chatbot/chat">
     Create and interact with AI chatbots trained on lecture videos.
   </Card>
-  <Card title="Course" icon="book-open" href="/api/course">
+  <Card title="Course" icon="book-open" href="/api/course/get-course">
     Manage courses, upload YouTube videos, and configure chatbot behavior.
   </Card>
-</Columns>
+</CardGroup>
