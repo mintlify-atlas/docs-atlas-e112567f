@@ -1,0 +1,130 @@
+---
+title: "Customizing your chatbot"
+description: "Configure the appearance, behavior, and AI settings for each of your Courser course chatbots."
+---
+
+Each Courser chatbot is independently configurable. You can change how it looks, how it introduces itself to students, what hint text appears in the input field, and even which OpenAI account it bills against.
+
+All settings are updated through the course settings page on the dashboard. Changes take effect immediately — no reprocessing of lecture videos is required.
+
+## Opening course settings
+
+1. Sign in to your Courser account.
+2. Click the course you want to configure.
+3. Select **Settings** from the course detail page.
+
+## Configurable fields
+
+### Name
+
+The display name shown to students in the chat interface header. Use a name that makes it clear which course the chatbot belongs to.
+
+**Default:** the name you provided when creating the chatbot.
+
+**Example:** `BIOL 201 — Intro to Biology Assistant`
+
+---
+
+### Placeholder text
+
+The hint text shown inside the chat input field before a student starts typing. A well-chosen placeholder sets student expectations and encourages better questions.
+
+**Default:** `What is significant about horseshoe crabs`
+
+**Tips:**
+- Use a realistic example question from your course material.
+- Keep it concise — it disappears as soon as the student starts typing.
+
+---
+
+### Accent color
+
+The primary color used for the chatbot's UI elements, including the send button and highlighted text. Accepts any valid CSS hex color.
+
+**Default:** `#fecc4e` (yellow)
+
+<Note>
+  Choose a color with enough contrast against white backgrounds to keep the interface accessible for all students.
+</Note>
+
+<Color variant="compact">
+  <Color.Item name="default" value="#fecc4e" />
+</Color>
+
+---
+
+### Background image
+
+An image displayed behind the chat interface — typically a course logo, department banner, or lecture photo. Upload an image file through the course settings UI; Courser stores it in Cloudinary and saves the resulting URL.
+
+**Default:** A generic classroom image hosted on Cloudinary.
+
+**Supported formats:** JPEG, PNG, WebP. There is no strict size limit, but images wider than 1,600px are recommended for sharp rendering on high-DPI screens.
+
+---
+
+### AI instructions
+
+A system prompt that controls how the AI assistant responds to students. This is sent to the OpenAI assistant before every conversation.
+
+**Default:**
+> You are a helpful AI assistant for a University classroom that answers questions for students about this course
+
+You can customize this to:
+- Restrict answers to course-specific topics only
+- Adjust the tone (formal, conversational, Socratic)
+- Add rules like "always recommend consulting the textbook for exam questions"
+- Specify the course name and professor so the chatbot can introduce itself accurately
+
+**Example custom instruction:**
+```
+You are the AI assistant for CHEM 301: Organic Chemistry at State University.
+Answer questions strictly based on the lecture material provided.
+If a student asks something not covered in the lectures, say so clearly
+and suggest they attend office hours or consult the course textbook.
+Always be concise and cite the relevant lecture when possible.
+```
+
+---
+
+### Custom OpenAI API key
+
+By default, Courser uses the platform's shared OpenAI API key. If you have your own OpenAI account, you can supply a per-course key to:
+- Use a different GPT model tier
+- Avoid sharing token quotas with other professors on the platform
+- Keep billing isolated to your department or grant
+
+**Default:** empty (uses the platform key).
+
+<Warning>
+  Your API key is stored in the database and used server-side. Never share your key publicly or commit it to a repository. If you believe your key has been compromised, rotate it immediately in the [OpenAI dashboard](https://platform.openai.com/api-keys) and update the value in Courser.
+</Warning>
+
+---
+
+## Saving changes
+
+Click **Save** on the settings page to apply all changes at once. The request updates all modified fields in a single API call — you do not need to save each field individually.
+
+## Settings reference
+
+<AccordionGroup>
+  <Accordion title="name">
+    Display name shown in the chatbot header. Type: string. No character limit enforced, but shorter names display better on mobile.
+  </Accordion>
+  <Accordion title="placeholder">
+    Hint text inside the input field. Type: string. Default: `What is significant about horseshoe crabs`.
+  </Accordion>
+  <Accordion title="color">
+    Hex color string for accent UI elements. Type: string. Default: `#fecc4e`.
+  </Accordion>
+  <Accordion title="backgroundImg">
+    URL of the background image. Uploaded through the UI; stored and served from Cloudinary. Type: string (URL).
+  </Accordion>
+  <Accordion title="instructions">
+    System prompt sent to the OpenAI assistant. Type: string. Default: `You are a helpful AI assistant for a University classroom that answers questions for students about this course`.
+  </Accordion>
+  <Accordion title="openAIKey">
+    Per-course OpenAI API key. Type: string. Default: empty string (falls back to platform key).
+  </Accordion>
+</AccordionGroup>

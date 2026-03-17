@@ -1,0 +1,121 @@
+---
+title: Chat
+description: Send a message to a course chatbot and receive an AI-generated answer with source citations.
+api: POST /chatbot/chat
+---
+
+Sends a student question to a course's AI assistant and returns an answer along with YouTube source citations. This is a public endpoint — no authentication is required.
+
+<Note>
+This endpoint does not require authentication. It is designed to be called directly from embedded chatbot widgets.
+</Note>
+
+## Request body
+
+<ParamField body="courseID" type="string" required>
+  The ID of the course whose chatbot should answer the question.
+</ParamField>
+
+<ParamField body="query" type="string" required>
+  The student's question.
+</ParamField>
+
+<ParamField body="thread_id" type="array">
+  Conversation history from a previous response. Pass back the `thread_id` value returned by the previous call to maintain multi-turn context. Omit on the first message in a new conversation.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+<ResponseField name="answer" type="string" required>
+  The AI-generated answer to the student's question.
+</ResponseField>
+
+<ResponseField name="sources" type="Citation[]" required>
+  An array of YouTube source citations used to generate the answer.
+
+  <Expandable title="Citation properties">
+    <ResponseField name="url" type="string">
+      Full YouTube URL with a timestamp query parameter, e.g. `https://www.youtube.com/watch?v=VIDEO_ID&t=123s`.
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Title of the source YouTube video.
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Always `"YouTube"`.
+    </ResponseField>
+    <ResponseField name="seconds" type="number">
+      The seconds component of the timestamp within the video.
+    </ResponseField>
+    <ResponseField name="minutes" type="number">
+      The minutes component of the timestamp within the video.
+    </ResponseField>
+    <ResponseField name="number" type="number">
+      Zero-indexed citation number, used to reference the source in the answer text.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="thread_id" type="array" required>
+  Updated conversation history. Pass this value back as `thread_id` in the next request to continue the conversation.
+</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url http://localhost:8000/chatbot/chat \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "courseID": "64f1a2b3c4d5e6f7a8b9c0d1",
+    "query": "What is the significance of horseshoe crabs?"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('http://localhost:8000/chatbot/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    courseID: '64f1a2b3c4d5e6f7a8b9c0d1',
+    query: 'What is the significance of horseshoe crabs?',
+  }),
+});
+
+const data = await response.json();
+console.log(data.answer);
+console.log(data.sources);
+
+// On the next turn, pass back thread_id to continue the conversation
+const followUp = await fetch('http://localhost:8000/chatbot/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    courseID: '64f1a2b3c4d5e6f7a8b9c0d1',
+    query: 'How do they contribute to medical research?',
+    thread_id: data.thread_id,
+  }),
+});
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "answer": "Horseshoe crabs are ecologically and medically significant. Their blood contains Limulus Amebocyte Lysate (LAL), which is used to test for bacterial endotoxins in medical equipment and vaccines [0].",
+  "sources": [
+    {
+      "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=183s",
+      "title": "Marine Biology: Horseshoe Crabs and Their Role in Medicine",
+      "type": "YouTube",
+      "seconds": 3,
+      "minutes": 3,
+      "number": 0
+    }
+  ],
+  "thread_id": []
+}
+```

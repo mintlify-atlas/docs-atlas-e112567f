@@ -1,0 +1,92 @@
+---
+title: "Creating a chatbot"
+description: "Step-by-step guide to building an AI course chatbot from your YouTube lecture videos."
+---
+
+Creating a Courser chatbot takes a few minutes. Once you've added your lecture videos, Courser automatically fetches transcripts, chunks the content, and builds a searchable knowledge base your students can query immediately.
+
+## Before you start
+
+- You must be signed in to your Courser professor account.
+- You need at least one YouTube URL for a lecture recording.
+- Videos must have English captions enabled on YouTube. Auto-generated captions work.
+
+<Info>
+  YouTube Shorts, playlists, and private videos are not supported. Use standard watch URLs only.
+</Info>
+
+## Steps
+
+<Steps>
+  <Step title="Sign in">
+    Go to [chatcourser.com](https://chatcourser.com) and sign in with Google or your email and password.
+
+    Only professors need an account. Students access the chatbot through a public link — no sign-in required.
+  </Step>
+
+  <Step title="Open the create form">
+    From your dashboard, click **Create Chatbot**. A form will appear with two fields: a name and a list of YouTube URLs.
+  </Step>
+
+  <Step title="Name your chatbot">
+    Enter a descriptive name for your course chatbot — for example, `BIOL 201 Assistant` or `Intro to Algorithms Bot`. Students will see this name in the chat interface.
+
+    You can rename the chatbot later from the course settings page.
+  </Step>
+
+  <Step title="Add your YouTube lecture URLs">
+    Paste one or more YouTube video URLs, one per line. Courser accepts standard YouTube watch URLs:
+
+    ```
+    https://www.youtube.com/watch?v=fDAPJ7rvcUw
+    https://www.youtube.com/watch?v=NJSO52hGZGs
+    ```
+
+    <Warning>
+      Shortened URLs (`youtu.be/...`), embed URLs, and playlist URLs are not accepted. Courser normalizes all links to the `https://www.youtube.com/watch?v=VIDEO_ID` format internally.
+    </Warning>
+
+    You can add multiple videos in one go. Each video's captions are fetched and processed independently.
+  </Step>
+
+  <Step title="Create the chatbot">
+    Click **Create**. Courser will:
+
+    1. **Fetch captions** — Downloads English captions for each YouTube video using the `youtube-captions-scraper` library.
+    2. **Chunk the transcript** — Splits each transcript into segments of approximately 1,000 characters to ensure precise retrieval.
+    3. **Generate embeddings** — Each chunk is embedded using OpenAI's `text-embedding-ada-002` model.
+    4. **Store in Pinecone** — Embeddings are indexed in Pinecone so that semantic search works at query time.
+    5. **Create an OpenAI assistant** — A dedicated OpenAI assistant is configured with your course context.
+
+    <Note>
+      Processing takes approximately 30–90 seconds per video depending on length. Do not close the browser tab while processing is in progress.
+    </Note>
+  </Step>
+
+  <Step title="Verify and test">
+    Once processing finishes, you'll be redirected to your chatbot's admin page. Click **Open Chat** to open the public interface.
+
+    Ask a question based on something covered in your lecture. A well-formed answer with timestamped citations means the chatbot is working correctly.
+  </Step>
+</Steps>
+
+## What happens if captions are missing?
+
+If a YouTube video has no English captions — manual or auto-generated — Courser cannot extract its transcript and the video will be skipped. To check whether a video has captions:
+
+1. Open the video on YouTube.
+2. Click **Settings** (gear icon) in the player controls.
+3. Select **Subtitles/CC**.
+
+If no subtitles appear, enable auto-captions in YouTube Studio before adding the URL to Courser.
+
+## What's next?
+
+<Columns cols={2}>
+  <Card title="Customize your chatbot" icon="palette" href="/professors/customizing-your-chatbot">
+    Change colors, background image, placeholder text, and AI behavior
+  </Card>
+  <Card title="Embed your chatbot" icon="code" href="/professors/embedding-chatbot">
+    Add the chatbot to Canvas, Blackboard, or any website
+  </Card>
+</Columns>

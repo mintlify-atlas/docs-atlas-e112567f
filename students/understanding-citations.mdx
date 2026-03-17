@@ -1,0 +1,97 @@
+---
+title: "Understanding citations"
+description: "How Courser sources its answers and how to use timestamped citations to verify information and explore lecture content."
+---
+
+Every answer the Courser chatbot generates includes citations — links back to the exact moments in your professor's lecture videos where the information comes from. Citations let you verify answers, get more context, and navigate directly to the relevant part of a lecture without rewatching the whole thing.
+
+## How citations work
+
+When you submit a question, Courser runs a semantic search across all transcript chunks from the uploaded lecture videos. It finds the three chunks most relevant to your question, uses them to generate the answer, and then surfaces those same chunks as citations.
+
+<Steps>
+  <Step title="Your question is embedded">
+    Courser converts your question into a vector using OpenAI's `text-embedding-ada-002` model. This captures the meaning of your question, not just the keywords.
+  </Step>
+
+  <Step title="Relevant transcript chunks are retrieved">
+    The embedding is compared against all stored lecture transcript chunks in Pinecone. The top 3 chunks with the highest semantic similarity to your question are selected.
+  </Step>
+
+  <Step title="An answer is generated">
+    GPT-3.5-turbo uses those three chunks as context to generate a response grounded in the lecture material.
+  </Step>
+
+  <Step title="Citations are attached">
+    Each of the three source chunks becomes a citation. The citation includes the video title and a timestamped URL pointing to the exact position in the lecture where that chunk appears.
+  </Step>
+</Steps>
+
+## What a citation contains
+
+Each citation includes the following information:
+
+| Field | Description | Example |
+|---|---|---|
+| **Video title** | The name of the YouTube lecture video | `Lecture 5 — Dynamic Programming` |
+| **Timestamp** | The minute and second in the video where the excerpt starts | `12m 03s` |
+| **Link** | A YouTube URL that opens the video at that exact timestamp | `youtube.com/watch?v=...&t=723s` |
+| **Citation number** | The index of this citation (0, 1, or 2) | `[1]` |
+
+<Note>
+  Citations are ordered by relevance — the first citation (index 0) corresponds to the transcript chunk most similar to your question.
+</Note>
+
+## Using citations
+
+### Clicking a citation link
+
+Clicking any citation link opens YouTube at the exact second where that transcript chunk begins. You can watch the professor explain the concept in full context, see any diagrams or examples on screen, and continue watching the surrounding material.
+
+### Verifying an answer
+
+Citations let you confirm that the chatbot's answer accurately reflects what was said in the lecture. If an answer seems off or incomplete, go directly to the cited timestamp and listen to what the professor actually said.
+
+<Tip>
+  If two or three citations point to different videos or very different timestamps, it means the answer was synthesized from multiple parts of the course. Each citation represents a distinct relevant segment.
+</Tip>
+
+### Finding related content
+
+The timestamp in a citation marks where a relevant segment starts, but the surrounding lecture material often has additional context. Once you're in the video at the cited timestamp, watch a few minutes before and after to get the full picture.
+
+## Limitations to keep in mind
+
+<AccordionGroup>
+  <Accordion title="Citations reflect the top 3 matches, not all relevant content">
+    The chatbot retrieves the three transcript chunks most similar to your question. There may be other relevant segments elsewhere in the lectures that weren't surfaced. If you need a complete picture, consider searching for the topic across your other course materials as well.
+  </Accordion>
+
+  <Accordion title="The chatbot can only cite what was uploaded">
+    If your professor hasn't uploaded a particular lecture yet, the chatbot won't have any content from it and won't be able to cite it. Contact your professor if you believe a lecture is missing from the chatbot.
+  </Accordion>
+
+  <Accordion title="Transcript accuracy depends on YouTube captions">
+    Courser extracts content from YouTube's captions — either manual or auto-generated. Auto-generated captions occasionally contain transcription errors, especially for technical terms, names, or domain-specific vocabulary. If a citation seems to misquote the lecture, check the video directly.
+  </Accordion>
+
+  <Accordion title="Answers are generated, not quoted">
+    The chatbot generates its answer using the cited segments as context — it doesn't quote them verbatim. The wording in the answer may differ from the wording in the lecture. Always use the citation links to read or hear the original source.
+  </Accordion>
+</AccordionGroup>
+
+## Tips for using citations effectively
+
+- **Check the first citation first.** It corresponds to the highest-confidence match for your question.
+- **Open citations in a new tab** so you don't lose your chat conversation.
+- **Use citations to study.** If the chatbot gives you a good explanation, use the citation links to re-watch that part of the lecture and reinforce your understanding.
+- **Multiple citations from the same video** can indicate that a topic was discussed at length in one lecture — worth watching that segment in full.
+
+<Columns cols={2}>
+  <Card title="Asking questions" icon="message-circle" href="/students/asking-questions">
+    Tips for writing better questions to get more accurate, relevant answers
+  </Card>
+  <Card title="Introduction" icon="book-open" href="/introduction">
+    Overview of how Courser works end to end
+  </Card>
+</Columns>

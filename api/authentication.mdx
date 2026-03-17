@@ -1,0 +1,83 @@
+---
+title: Authentication
+description: How Courser uses JWT tokens to authenticate API requests.
+---
+
+Courser uses JWT (JSON Web Token) authentication. To access protected endpoints, you must include a valid token in every request header.
+
+## Obtaining a token
+
+A token is issued in the response body of any of the three auth endpoints:
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /auth/google` | Sign in or register via Google OAuth |
+| `POST /auth/signup-email` | Register with email and password |
+| `POST /auth/login-email` | Sign in with email and password |
+
+All three endpoints return the same shape on success:
+
+```json
+{
+  "token": "<jwt_token>",
+  "message": "Login successful"
+}
+```
+
+## Sending the token
+
+Include the token in the `x-access'courser-auth-token` header of every authenticated request.
+
+<Warning>
+The header name contains a literal apostrophe character: `x-access'courser-auth-token`. Copy the header name exactly — an incorrect header name will result in a `401` response.
+</Warning>
+
+```bash
+curl http://localhost:8000/auth/isloggedin \
+  --header "x-access'courser-auth-token: <your_jwt_token>"
+```
+
+## Token format and expiry
+
+- Tokens are signed JWTs using the server's `JWT_PRIVATE_KEY` environment variable.
+- Each token encodes the user's internal `_id`.
+- Tokens expire after **1000 days**.
+
+## User ID derivation
+
+Courser does not store Firebase UIDs directly. Instead, the user's internal `_id` is derived by taking the SHA-256 hash of the Firebase UID (or Google `idToken`) and truncating it to the first **24 hex characters**.
+
+```
+user._id = SHA-256(firebase_uid).substring(0, 24)
+```
+
+This derived ID is what gets encoded into the JWT payload and stored in MongoDB.
+
+## Protected endpoints
+
+Endpoints that require authentication run the `isLoggedIn` middleware, which:
+
+<Steps>
+  <Step title="Extract the token">
+    Reads the value of the `x-access'courser-auth-token` request header. Returns `401` if the header is absent.
+  </Step>
+  <Step title="Verify the token">
+    Verifies the JWT signature using `JWT_PRIVATE_KEY`. Returns `401` if the token is invalid or expired.
+  </Step>
+  <Step title="Look up the user">
+    Queries MongoDB for the user whose `_id` matches the decoded token payload. Returns `401` if no user is found.
+  </Step>
+  <Step title="Attach the user profile">
+    Attaches the full user document to `res.userProfile` and calls `next()` to proceed to the route handler.
+  </Step>
+</Steps>
+
+## 401 error responses
+
+Authenticated endpoints return `401` with one of the following string bodies when authentication fails:
+
+| Body | Cause |
+|------|-------|
+| `"not-logged-in"` | Header is missing |
+| `"no user found"` | Token is valid but the user no longer exists in the database |
+| `"ERROR"` | Token verification failed (invalid signature or expired) |

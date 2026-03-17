@@ -1,0 +1,79 @@
+---
+title: Check authentication
+description: Verify a JWT token and retrieve the authenticated user's profile.
+api: GET /auth/isloggedin
+---
+
+Verifies the provided JWT token and returns the authenticated user's profile from the database. Use this endpoint to confirm a token is still valid and to retrieve up-to-date user data.
+
+<Note>
+This endpoint requires authentication. Include your token in the `x-access'courser-auth-token` header.
+</Note>
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  A valid JWT token obtained from any auth endpoint. Note the apostrophe in the header name.
+</ParamField>
+
+## Response
+
+### 200 — Authenticated
+
+<ResponseField name="user" type="object" required>
+  The authenticated user's full profile document.
+  <Expandable title="user properties">
+    <ResponseField name="_id" type="string" required>
+      The user's internal ID. Derived by SHA-256 hashing the Firebase UID and taking the first 24 hex characters.
+    </ResponseField>
+    <ResponseField name="email" type="string" required>
+      The user's email address.
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+      The user's display name.
+    </ResponseField>
+    <ResponseField name="courses" type="string[]" required>
+      Array of MongoDB ObjectIDs referencing the courses owned by this user. Empty array if the user has no courses.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### 401 — Unauthorized
+
+Returned as a JSON string (not an object) in one of the following cases:
+
+| Response body | Cause |
+|---------------|-------|
+| `"not-logged-in"` | The `x-access'courser-auth-token` header is absent |
+| `"no user found"` | Token is valid but no matching user exists in the database |
+| `"ERROR"` | Token verification failed (invalid signature or expired) |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url http://localhost:8000/auth/isloggedin \
+  --header "x-access'courser-auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "user": {
+    "_id": "a3f8c1e09b2d7f4e6a1c3d5b",
+    "email": "professor@university.edu",
+    "name": "Dr. Jane Smith",
+    "courses": [
+      "64b1f2e3c4a5d6f7e8a9b0c1",
+      "64b1f2e3c4a5d6f7e8a9b0c2"
+    ]
+  }
+}
+```
+
+```json 401
+"not-logged-in"
+```

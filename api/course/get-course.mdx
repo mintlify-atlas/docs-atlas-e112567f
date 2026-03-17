@@ -1,0 +1,94 @@
+---
+title: Get course
+description: Retrieve a course by its ID. This is the public endpoint used by the embeddable chatbot widget.
+api: GET /course/getCourse/{courseID}
+---
+
+Returns a single course by ID. This is a public endpoint — no authentication is required.
+
+<Note>
+This is the endpoint used by the embeddable chatbot widget to load course configuration (name, color, placeholder text, background image, and instructions) before rendering.
+</Note>
+
+## Path parameters
+
+<ParamField path="courseID" type="string" required>
+  The ID of the course to retrieve.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+Returns the course object directly (not wrapped in a key).
+
+<ResponseField name="_id" type="string">
+  Unique identifier for the course.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The course display name.
+</ResponseField>
+
+<ResponseField name="instructions" type="string">
+  The AI system prompt used by the course chatbot.
+</ResponseField>
+
+<ResponseField name="color" type="string">
+  The chatbot accent color as a hex string. Defaults to `"#fecc4e"`.
+</ResponseField>
+
+<ResponseField name="placeholder" type="string">
+  The input field hint text shown in the chatbot UI. Defaults to `"What is significant about horseshoe crabs"`.
+</ResponseField>
+
+<ResponseField name="backgroundImg" type="string">
+  URL of the chatbot background image.
+</ResponseField>
+
+<ResponseField name="openAIAssistantID" type="string">
+  The OpenAI assistant ID for this course.
+</ResponseField>
+
+<ResponseField name="openAIFiles" type="string[]">
+  IDs of files uploaded to OpenAI for retrieval.
+</ResponseField>
+
+<ResponseField name="transcriptions" type="string[]">
+  Array of Transcription document IDs for the course's processed videos.
+</ResponseField>
+
+<ResponseField name="sourceFiles" type="string[]">
+  Array of source file paths or identifiers.
+</ResponseField>
+
+<ResponseField name="openAIKey" type="string">
+  Custom OpenAI API key for this course, if set. Empty string if using the platform default.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url http://localhost:8000/course/getCourse/64f1a2b3c4d5e6f7a8b9c0d1
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "_id": "64f1a2b3c4d5e6f7a8b9c0d1",
+  "name": "Introduction to Marine Biology",
+  "instructions": "You are a helpful AI assistant for a University classroom that answers questions for students about this course",
+  "color": "#fecc4e",
+  "placeholder": "What is significant about horseshoe crabs",
+  "backgroundImg": "https://res.cloudinary.com/dlk3ezbal/image/upload/v1699589098/jqmlca7vhr0cnzgdbaah.png",
+  "openAIAssistantID": "asst_abc123xyz",
+  "openAIFiles": ["file-abc123"],
+  "transcriptions": ["64f1a2b3c4d5e6f7a8b9c0d2"],
+  "sourceFiles": [],
+  "openAIKey": ""
+}
+```

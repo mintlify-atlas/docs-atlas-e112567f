@@ -1,0 +1,87 @@
+---
+title: Sign up with email
+description: Register a new user account with an email address, password, and display name.
+api: POST /auth/signup-email
+---
+
+Creates a new user account using an email and password. The user is registered in Firebase Authentication and then stored in MongoDB. Returns a JWT token on success.
+
+<Note>
+This endpoint does not require authentication.
+</Note>
+
+## Request body
+
+<ParamField body="email" type="string" required>
+  The user's email address. Must be unique across all accounts — including those registered via Google.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The password for the new account. Passed to Firebase Authentication; Courser does not store it directly.
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  The user's display name. Stored on the MongoDB user record.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+<ResponseField name="token" type="string" required>
+  A signed JWT valid for 1000 days. Pass this value in the `x-access'courser-auth-token` header on authenticated requests.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Always `"Login successful"`.
+</ResponseField>
+
+### 409 — Email already in use
+
+<ResponseField name="message" type="string">
+  `"Email already in use"`
+</ResponseField>
+
+### 500 — Error creating account
+
+Returned when Firebase Authentication or the MongoDB save operation fails.
+
+<ResponseField name="message" type="string">
+  `"Error creating account"`
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url http://localhost:8000/auth/signup-email \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "email": "professor@university.edu",
+    "password": "securepassword123",
+    "name": "Dr. Jane Smith"
+  }'
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "message": "Login successful"
+}
+```
+
+```json 409
+{
+  "message": "Email already in use"
+}
+```
+
+```json 500
+{
+  "message": "Error creating account"
+}
+```

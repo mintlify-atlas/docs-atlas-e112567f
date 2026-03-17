@@ -1,0 +1,104 @@
+---
+title: "Managing courses"
+description: "View, update, and analyze all of your Courser chatbots from the dashboard."
+---
+
+The Courser dashboard gives you a single place to see every chatbot you've created, access their settings, and review how students are using them.
+
+## Viewing your courses
+
+After signing in, your dashboard lists every chatbot associated with your account. Courser fetches all courses linked to your user profile — only courses you created are shown.
+
+Each course card displays:
+- The chatbot name
+- The accent color you've set
+- A link to the public-facing chat interface
+- A link to the course settings page
+
+## Accessing course details
+
+Click a course card to open its detail page. From here you can:
+
+- Update the name, colors, and AI instructions
+- View the public chatbot URL to share with students
+- Export conversation history as CSV
+- See the total number of conversations logged
+
+## Exporting conversation data
+
+Courser logs every student conversation. You can export this data as a CSV file to analyze which topics students ask about most, identify gaps in your lecture coverage, or review AI response quality.
+
+### How to export
+
+<Steps>
+  <Step title="Open the course detail page">
+    Click on the course you want to export data for.
+  </Step>
+  <Step title="Go to the Dataset tab">
+    Select the **Dataset** tab on the course detail page.
+  </Step>
+  <Step title="Set a row limit and export">
+    Choose how many rows to include in the export (10–100, default 50), then click **Export CSV**.
+
+    The downloaded file is named `dataset-{courseId}-{timestamp}.csv`.
+  </Step>
+</Steps>
+
+### CSV format
+
+The exported file contains three columns:
+
+| Column | Description |
+|---|---|
+| `Start Time` | Timestamp when the conversation began |
+| `User Question` | The question a student typed |
+| `Assistant Answer` | The answer the chatbot generated |
+
+<Note>
+  The export limit is capped between 10 and 100 rows per request. To analyze larger datasets, export multiple times or use the API directly with a custom `limit` query parameter.
+</Note>
+
+### Export via the API
+
+You can also trigger an export programmatically:
+
+```bash
+GET /chatbot/:courseId/dataset/export?limit=100
+```
+
+The response is a `text/csv` file attachment. The `limit` parameter accepts values between `10` and `100`. Values outside this range are clamped automatically.
+
+## Checking conversation counts
+
+To see how many total conversations have been logged for a course without downloading the full export:
+
+```bash
+GET /chatbot/:courseId/dataset/count
+```
+
+This returns a JSON object:
+
+```json
+{ "count": 142 }
+```
+
+The count reflects all conversations ever recorded for that course, not just the most recent export window.
+
+## Deleting a course
+
+<Warning>
+  Deleting a course removes all associated transcriptions, conversation history, and embeddings. This action cannot be undone.
+</Warning>
+
+Contact support or use the self-hosted admin tools to delete a course if needed. Bulk deletion is not currently available through the dashboard UI.
+
+## What's next?
+
+<Columns cols={2}>
+  <Card title="Customize your chatbot" icon="palette" href="/professors/customizing-your-chatbot">
+    Adjust the look, feel, and behavior of each course chatbot
+  </Card>
+  <Card title="Embed your chatbot" icon="code" href="/professors/embedding-chatbot">
+    Add the chatbot to Canvas, Blackboard, or any course website
+  </Card>
+</Columns>

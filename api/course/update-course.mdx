@@ -1,0 +1,143 @@
+---
+title: Update course
+description: Update a course's name, appearance, AI instructions, and other settings. Supports image uploads.
+api: POST /course/update
+---
+
+Updates one or more settings for an existing course. All body fields except `courseID` are optional — only the fields you include will be updated. Authentication is required.
+
+<Info>
+If you are uploading a background image, send the request as `multipart/form-data`. If you are only updating text fields, you can send the request as `application/json`.
+</Info>
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  Your JWT authentication token.
+</ParamField>
+
+## Request body
+
+<ParamField body="courseID" type="string" required>
+  The ID of the course to update.
+</ParamField>
+
+<ParamField body="name" type="string">
+  New display name for the course.
+</ParamField>
+
+<ParamField body="placeholder" type="string">
+  New input hint text shown in the chatbot's message field.
+</ParamField>
+
+<ParamField body="color" type="string">
+  New accent color for the chatbot UI as a hex string, e.g. `"#3b82f6"`.
+</ParamField>
+
+<ParamField body="instructions" type="string">
+  Custom AI system prompt that replaces the default assistant instructions.
+</ParamField>
+
+<ParamField body="openAIKey" type="string">
+  A custom OpenAI API key to use for this course instead of the platform default.
+</ParamField>
+
+<ParamField body="image" type="file">
+  A background image for the chatbot. Must be sent as `multipart/form-data`. The image is uploaded to Cloudinary and the resulting URL is stored in `backgroundImg`.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+Returns the full updated course object.
+
+<ResponseField name="_id" type="string">
+  Unique identifier for the course.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The course display name.
+</ResponseField>
+
+<ResponseField name="instructions" type="string">
+  The AI system prompt used by the course chatbot.
+</ResponseField>
+
+<ResponseField name="color" type="string">
+  The chatbot accent color as a hex string.
+</ResponseField>
+
+<ResponseField name="placeholder" type="string">
+  The input field hint text shown in the chatbot UI.
+</ResponseField>
+
+<ResponseField name="backgroundImg" type="string">
+  URL of the chatbot background image. Updated to a new Cloudinary URL if an image was uploaded.
+</ResponseField>
+
+<ResponseField name="openAIAssistantID" type="string">
+  The OpenAI assistant ID for this course.
+</ResponseField>
+
+<ResponseField name="openAIFiles" type="string[]">
+  IDs of files uploaded to OpenAI for retrieval.
+</ResponseField>
+
+<ResponseField name="transcriptions" type="string[]">
+  Array of Transcription document IDs for the course's processed videos.
+</ResponseField>
+
+<ResponseField name="sourceFiles" type="string[]">
+  Array of source file paths or identifiers.
+</ResponseField>
+
+<ResponseField name="openAIKey" type="string">
+  Custom OpenAI API key for this course, if set.
+</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```bash Without image (JSON)
+curl --request POST \
+  --url http://localhost:8000/course/update \
+  --header "x-access'courser-auth-token: <your_jwt_token>" \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "courseID": "64f1a2b3c4d5e6f7a8b9c0d1",
+    "name": "Advanced Marine Biology",
+    "color": "#3b82f6",
+    "placeholder": "Ask me anything about marine ecosystems",
+    "instructions": "You are an expert marine biology tutor. Provide detailed, scientifically accurate answers."
+  }'
+```
+
+```bash With image (multipart/form-data)
+curl --request POST \
+  --url http://localhost:8000/course/update \
+  --header "x-access'courser-auth-token: <your_jwt_token>" \
+  --form 'courseID=64f1a2b3c4d5e6f7a8b9c0d1' \
+  --form 'name=Advanced Marine Biology' \
+  --form 'color=#3b82f6' \
+  --form 'image=@/path/to/background.jpg'
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "_id": "64f1a2b3c4d5e6f7a8b9c0d1",
+  "name": "Advanced Marine Biology",
+  "instructions": "You are an expert marine biology tutor. Provide detailed, scientifically accurate answers.",
+  "color": "#3b82f6",
+  "placeholder": "Ask me anything about marine ecosystems",
+  "backgroundImg": "https://res.cloudinary.com/dlk3ezbal/image/upload/v1699589098/newimage.png",
+  "openAIAssistantID": "asst_abc123xyz",
+  "openAIFiles": ["file-abc123"],
+  "transcriptions": ["64f1a2b3c4d5e6f7a8b9c0d2"],
+  "sourceFiles": [],
+  "openAIKey": ""
+}
+```

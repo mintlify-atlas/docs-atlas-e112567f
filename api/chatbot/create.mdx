@@ -1,0 +1,113 @@
+---
+title: Create chatbot
+description: Create a new course chatbot by providing a name and a list of YouTube lecture video URLs.
+api: POST /chatbot/create
+---
+
+Creates a new course, processes the provided YouTube lecture videos to extract transcriptions, and sets up an OpenAI assistant for the course. Authentication is required.
+
+<Warning>
+This endpoint performs heavy background work: downloading YouTube captions and building an OpenAI assistant configuration. Expect **30–90 seconds of processing time per video**. The request will not return until processing is complete.
+</Warning>
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  Your JWT authentication token.
+</ParamField>
+
+## Request body
+
+<ParamField body="name" type="string" required>
+  The display name for the chatbot and course.
+</ParamField>
+
+<ParamField body="youtubeUrls" type="string[]" required>
+  An array of YouTube video URLs to use as the chatbot's knowledge base. Each URL must be a standard watch URL.
+
+  <Note>
+    URLs must use the format `https://www.youtube.com/watch?v=VIDEO_ID`. Shortened URLs (`youtu.be`), playlist URLs, and embed URLs are not supported.
+  </Note>
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+<ResponseField name="course" type="object" required>
+  The newly created course object.
+
+  <Expandable title="Course properties">
+    <ResponseField name="_id" type="string">
+      Unique identifier for the course.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      The course display name.
+    </ResponseField>
+    <ResponseField name="instructions" type="string">
+      The AI system prompt. Defaults to `"You are a helpful AI assistant for a University classroom that answers questions for students about this course"`.
+    </ResponseField>
+    <ResponseField name="color" type="string">
+      The chatbot accent color as a hex string. Defaults to `"#fecc4e"`.
+    </ResponseField>
+    <ResponseField name="placeholder" type="string">
+      The input field hint text. Defaults to `"What is significant about horseshoe crabs"`.
+    </ResponseField>
+    <ResponseField name="backgroundImg" type="string">
+      URL of the chatbot background image. Defaults to a Cloudinary-hosted image.
+    </ResponseField>
+    <ResponseField name="openAIAssistantID" type="string">
+      The OpenAI assistant ID created for this course.
+    </ResponseField>
+    <ResponseField name="openAIFiles" type="string[]">
+      IDs of files uploaded to OpenAI for retrieval.
+    </ResponseField>
+    <ResponseField name="transcriptions" type="string[]">
+      Array of Transcription document IDs referencing the processed YouTube videos.
+    </ResponseField>
+    <ResponseField name="sourceFiles" type="string[]">
+      Array of source file paths or identifiers used during ingestion.
+    </ResponseField>
+    <ResponseField name="openAIKey" type="string">
+      Custom OpenAI API key for this course, if set. Empty string if using the platform default.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url http://localhost:8000/chatbot/create \
+  --header "x-access'courser-auth-token: <your_jwt_token>" \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Introduction to Marine Biology",
+    "youtubeUrls": [
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "https://www.youtube.com/watch?v=xvFZjo5PgG0"
+    ]
+  }'
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "course": {
+    "_id": "64f1a2b3c4d5e6f7a8b9c0d1",
+    "name": "Introduction to Marine Biology",
+    "instructions": "You are a helpful AI assistant for a University classroom that answers questions for students about this course",
+    "color": "#fecc4e",
+    "placeholder": "What is significant about horseshoe crabs",
+    "backgroundImg": "https://res.cloudinary.com/dlk3ezbal/image/upload/v1699589098/jqmlca7vhr0cnzgdbaah.png",
+    "openAIAssistantID": "asst_abc123xyz",
+    "openAIFiles": ["file-abc123", "file-def456"],
+    "transcriptions": ["64f1a2b3c4d5e6f7a8b9c0d2", "64f1a2b3c4d5e6f7a8b9c0d3"],
+    "sourceFiles": [],
+    "openAIKey": ""
+  }
+}
+```

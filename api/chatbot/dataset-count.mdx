@@ -1,0 +1,45 @@
+---
+title: Dataset count
+description: Get the total number of conversations logged for a course.
+api: GET /chatbot/{courseId}/dataset/count
+---
+
+Returns the total count of student conversation turns recorded for a given course. Authentication is required.
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  Your JWT authentication token.
+</ParamField>
+
+## Path parameters
+
+<ParamField path="courseId" type="string" required>
+  The ID of the course.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+<ResponseField name="count" type="number" required>
+  The total number of conversation records stored for the course.
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url http://localhost:8000/chatbot/64f1a2b3c4d5e6f7a8b9c0d1/dataset/count \
+  --header "x-access'courser-auth-token: <your_jwt_token>"
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "count": 142
+}
+```

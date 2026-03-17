@@ -1,0 +1,118 @@
+---
+title: "Embedding your chatbot"
+description: "Share your Courser chatbot with students via a public link or embed it directly in Canvas, Blackboard, or any course website."
+---
+
+Courser chatbots are designed to be shared. Each chatbot has a public URL that anyone can open in a browser — students do not need a Courser account. You can share this link directly, or embed it inside your learning management system (LMS) using an iframe.
+
+## Getting the public URL
+
+The chatbot's public URL is available from the course detail page on your dashboard.
+
+1. Sign in and open the course.
+2. Click **Copy Link** (or copy the URL from the **Open Chat** button).
+
+The public chatbot endpoint does not require authentication — anyone with the link can use it immediately.
+
+## Sharing the link directly
+
+The simplest way to give students access is to paste the URL in your course materials:
+
+- Add it to your course syllabus
+- Post it as an announcement in your LMS
+- Include it in your lecture slides
+- Email it directly to students
+
+Students click the link and land on a fully functional chat interface without creating an account.
+
+## Embedding with an iframe
+
+You can embed the chatbot directly inside any webpage, Canvas page, or Blackboard item using a standard HTML `<iframe>`. This keeps students on the course page rather than opening a new tab.
+
+### iframe snippet
+
+```html
+<iframe
+  src="https://chatcourser.com/chat/YOUR_COURSE_ID"
+  width="100%"
+  height="700"
+  style="border: none; border-radius: 8px;"
+  title="Course AI Assistant"
+  allow="clipboard-write"
+></iframe>
+```
+
+Replace `YOUR_COURSE_ID` with the course ID from your dashboard URL. Adjust `height` to fit your page layout — `600`–`800px` works well for most screens.
+
+<Note>
+  Set `title` on the iframe for screen reader accessibility. A value like `"BIOL 201 AI Assistant"` is more descriptive than the generic example above.
+</Note>
+
+## Embedding in Canvas
+
+<Steps>
+  <Step title="Open a Canvas page or assignment">
+    Navigate to the Canvas page where you want to add the chatbot. Click **Edit**.
+  </Step>
+
+  <Step title="Switch to HTML view">
+    In the Canvas rich text editor, click the **HTML Editor** button (`< >`) in the toolbar. This switches from the visual editor to raw HTML.
+  </Step>
+
+  <Step title="Paste the iframe">
+    Paste the iframe snippet from above into the HTML editor. Replace `YOUR_COURSE_ID` with your actual course ID.
+
+    ```html
+    <iframe
+      src="https://chatcourser.com/chat/YOUR_COURSE_ID"
+      width="100%"
+      height="700"
+      style="border: none; border-radius: 8px;"
+      title="BIOL 201 AI Assistant"
+      allow="clipboard-write"
+    ></iframe>
+    ```
+  </Step>
+
+  <Step title="Save and verify">
+    Click **Save** (or **Save & Publish** if you want students to see it immediately). Open the page as a student to confirm the chatbot loads and is functional.
+  </Step>
+</Steps>
+
+<Warning>
+  Some Canvas instances restrict iframes to allowlisted domains. If the chatbot doesn't render, ask your Canvas administrator to allowlist `chatcourser.com`. Alternatively, share the public link directly.
+</Warning>
+
+## Embedding in Blackboard
+
+Blackboard's **Build Content** → **Item** editor also supports HTML embedding:
+
+1. Create or edit a content item.
+2. In the text editor, click the **Source Code** button (`</>`).
+3. Paste the iframe snippet and save.
+
+The same domain allowlisting caveat applies — contact your Blackboard administrator if the embed is blocked.
+
+## Student experience
+
+Students who open the chatbot via the public link or embedded iframe:
+
+- Do not need a Courser account
+- See the chatbot name, background image, and accent color you've configured
+- Can ask questions immediately and receive answers with timestamped citations
+- Cannot access any professor-facing settings or conversation history exports
+
+<Tip>
+  Let students know in your syllabus that the chatbot is trained on lecture videos only. Setting that expectation reduces frustration when the chatbot declines to answer questions about material not covered in class.
+</Tip>
+
+## What's next?
+
+<Columns cols={2}>
+  <Card title="Customizing your chatbot" icon="palette" href="/professors/customizing-your-chatbot">
+    Adjust colors, instructions, and background image
+  </Card>
+  <Card title="Managing courses" icon="folder" href="/professors/managing-courses">
+    Export conversation data and view student usage
+  </Card>
+</Columns>

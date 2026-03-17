@@ -1,0 +1,199 @@
+---
+title: "Environment variables"
+description: "Complete reference for all environment variables required to run a self-hosted Courser deployment."
+---
+
+Courser's backend reads configuration from environment variables at startup. In development, set them in a `.env` file in the repository root. In production, inject them through your host's environment or secret manager.
+
+<Note>
+  When `NODE_ENV` is set to `production`, the backend skips loading `.env` via `dotenv`. All variables must be present in the environment before the process starts.
+</Note>
+
+## Backend variables
+
+Create a `.env` file in the repository root (the same directory as `app.js`).
+
+### Database
+
+<ParamField path="MONGO_URI" type="string" required>
+  MongoDB connection string. Used by Mongoose to connect to your database on startup.
+
+  For MongoDB Atlas, copy the connection string from **Database → Connect → Drivers**. Replace `<password>` with your actual password and optionally append a database name.
+
+  ```
+  MONGO_URI=mongodb+srv://username:password@cluster0.abc123.mongodb.net/courser
+  ```
+</ParamField>
+
+### AI services
+
+<ParamField path="OPENAI_API_KEY" type="string" required>
+  Platform-default OpenAI API key. Used for:
+
+  - **Embeddings** — `text-embedding-ada-002` model, called when a professor adds lecture videos
+  - **Chat completions** — `gpt-3.5-turbo-16k` model, called on every student question
+
+  This key is used for courses that do not have a professor-supplied API key. Obtain one from the [OpenAI platform](https://platform.openai.com/api-keys).
+
+  ```
+  OPENAI_API_KEY=sk-...
+  ```
+</ParamField>
+
+<ParamField path="PINECONE_API_KEY" type="string" required>
+  Pinecone API key. Used to read and write lecture embeddings in the vector index.
+
+  The index name is hardcoded as `courser` in `classes/CourserAIAssistant.js`. You must create an index with that name in your Pinecone project before starting the backend. See [Self-hosting overview](/self-hosting/overview) for index creation settings.
+
+  Obtain your key from the [Pinecone console](https://app.pinecone.io) under **API Keys**.
+
+  ```
+  PINECONE_API_KEY=pcsk_...
+  ```
+</ParamField>
+
+### Authentication
+
+<ParamField path="JWT_PRIVATE_KEY" type="string" required>
+  Secret key used to sign and verify JWT tokens for professor sessions. Set this to a long, random string — at least 32 characters.
+
+  <Warning>
+    Use a strong, unpredictable value in production. Anyone who obtains this key can forge valid session tokens for any professor account.
+  </Warning>
+
+  Generate a suitable value with:
+
+  ```bash
+  node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+  ```
+
+  ```
+  JWT_PRIVATE_KEY=a3f9c2d8e1b74a6f...
+  ```
+</ParamField>
+
+### File storage
+
+<ParamField path="CLOUDINARY_URL" type="string" required>
+  Cloudinary connection URL, used for uploading chatbot background images. This is the all-in-one credential URL that Cloudinary provides in your dashboard.
+
+  Find it in the [Cloudinary console](https://console.cloudinary.com) under **Dashboard → API Keys**.
+
+  ```
+  CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+  ```
+
+  Alternatively, you can configure Cloudinary using individual variables (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) if your Cloudinary SDK version supports it, but `CLOUDINARY_URL` is the format used in the current source.
+</ParamField>
+
+### Server
+
+<ParamField path="PORT" type="number" default="8000">
+  Port the Express server listens on. Optional — defaults to `8000` if not set.
+
+  ```
+  PORT=8000
+  ```
+</ParamField>
+
+<ParamField path="NODE_ENV" type="string" default="development">
+  Runtime environment. Set to `production` in production deployments.
+
+  When set to `production`, the backend skips calling `require('dotenv').config()`, so it will not read a `.env` file. All variables must already be in the environment.
+
+  ```
+  NODE_ENV=production
+  ```
+</ParamField>
+
+## Firebase configuration
+
+Firebase Auth is configured differently from the variables above. The Firebase client config is currently hardcoded as an object in `endpoints/auth.js`:
+
+```javascript
+// endpoints/auth.js
+const firebaseConfig = {
+    apiKey: "...",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "...",
+};
+```
+
+For a self-hosted deployment, replace this object with the configuration from your own Firebase project. You can find it in the Firebase console under **Project Settings → Your apps → Web app → SDK setup and configuration**.
+
+<Info>
+  Firebase client config values (API key, project ID, etc.) are designed to be public — they identify your Firebase project but do not grant privileged access on their own. Security is enforced by Firebase Authentication rules and your backend's JWT verification. That said, use your own project's config in any self-hosted deployment so that accounts belong to your project.
+</Info>
+
+## Frontend variables
+
+Create a `.env.local` file in the `client` directory for local development. In production, set these through your hosting provider.
+
+<ParamField path="NEXT_PUBLIC_API_URL" type="string" required>
+  Full base URL of your backend API, without a trailing slash. The Next.js frontend uses this to construct all API requests.
+
+  ```
+  # Local development
+  NEXT_PUBLIC_API_URL=http://localhost:8000
+
+  # Production
+  NEXT_PUBLIC_API_URL=https://api.your-domain.com
+  ```
+
+  Because this variable is prefixed with `NEXT_PUBLIC_`, Next.js inlines it into the browser bundle at build time. Changing it requires a rebuild.
+</ParamField>
+
+## Sample .env file
+
+Copy this template to the repository root as `.env` and fill in your values:
+
+```bash .env
+# -----------------------------------------------
+# Courser backend — environment variables
+# -----------------------------------------------
+
+# MongoDB connection string
+MONGO_URI=mongodb+srv://username:password@cluster0.abc123.mongodb.net/courser
+
+# OpenAI API key (embeddings + chat completions)
+OPENAI_API_KEY=sk-...
+
+# Pinecone API key
+# Index name must be "courser" — create it in the Pinecone console
+PINECONE_API_KEY=pcsk_...
+
+# JWT secret — use a long random string, keep this private
+JWT_PRIVATE_KEY=replace-with-a-long-random-secret
+
+# Cloudinary — background image uploads
+CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+
+# Server port (optional, defaults to 8000)
+# PORT=8000
+
+# Set to "production" in production deployments
+# NODE_ENV=production
+```
+
+And in `client/.env.local`:
+
+```bash client/.env.local
+# Backend API base URL (no trailing slash)
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+## Variable summary
+
+| Variable | Required | Default | Used in |
+|---|---|---|---|
+| `MONGO_URI` | Yes | — | `app.js` |
+| `OPENAI_API_KEY` | Yes | — | `classes/CourserAIAssistant.js` |
+| `PINECONE_API_KEY` | Yes | — | `classes/CourserAIAssistant.js` |
+| `JWT_PRIVATE_KEY` | Yes | — | `middleware.js` |
+| `CLOUDINARY_URL` | Yes | — | `endpoints/course.js` |
+| `PORT` | No | `8000` | `app.js` |
+| `NODE_ENV` | No | `development` | `app.js` |
+| `NEXT_PUBLIC_API_URL` | Yes | — | Next.js frontend |

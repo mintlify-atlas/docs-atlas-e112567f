@@ -1,122 +1,93 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Courser",
+  "theme": "almond",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#fac94a",
+    "light": "#6a2715",
+    "dark": "#e0e7e9"
   },
   "favicon": "/favicon.svg",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/GautamSharda/courser"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/GautamSharda/courser"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "For Professors",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "professors/creating-a-chatbot",
+              "professors/managing-courses",
+              "professors/customizing-your-chatbot",
+              "professors/embedding-chatbot"
             ]
           },
           {
-            "group": "Customization",
+            "group": "For Students",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "students/asking-questions",
+              "students/understanding-citations"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Self-Hosting",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "self-hosting/overview",
+              "self-hosting/environment-variables"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
+            "pages": ["api/overview", "api/authentication"]
+          },
+          {
+            "group": "Auth",
             "pages": [
-              "api-reference/introduction"
+              "api/auth/google",
+              "api/auth/signup-email",
+              "api/auth/login-email",
+              "api/auth/is-logged-in"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Chatbot",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api/chatbot/chat",
+              "api/chatbot/create",
+              "api/chatbot/dataset-count",
+              "api/chatbot/dataset-export"
+            ]
+          },
+          {
+            "group": "Course",
+            "pages": [
+              "api/course/get-all-courses",
+              "api/course/get-course",
+              "api/course/update-course"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

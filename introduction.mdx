@@ -1,0 +1,66 @@
+---
+title: "Introduction"
+description: "Courser is an AI-powered platform that lets professors build course-specific chatbots trained on lecture videos, giving students instant, cited answers to their questions."
+---
+
+## What is Courser?
+
+Courser helps professors create AI assistants for their courses. Each chatbot is trained on the course's YouTube lecture videos and can answer student questions with direct citations — linking back to the exact timestamp in the lecture where the answer comes from.
+
+Professors can embed their chatbot on any course page (Canvas, Blackboard, a course website) using a simple public link. Students interact with the chatbot directly in their browser without needing an account.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Create your first AI chatbot in under 10 minutes
+  </Card>
+  <Card title="Creating a Chatbot" icon="robot" href="/professors/creating-a-chatbot">
+    Step-by-step guide for professors
+  </Card>
+  <Card title="For Students" icon="graduation-cap" href="/students/asking-questions">
+    Learn how to get the most out of Courser
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/overview">
+    Integrate Courser into your own applications
+  </Card>
+</CardGroup>
+
+## How it works
+
+<Steps>
+  <Step title="Professor uploads lecture videos">
+    Paste YouTube links for your lecture recordings. Courser automatically fetches captions and processes the content.
+  </Step>
+  <Step title="Courser builds the knowledge base">
+    Transcripts are chunked and embedded using OpenAI's `text-embedding-ada-002` model. Embeddings are stored in Pinecone for fast semantic retrieval.
+  </Step>
+  <Step title="Students ask questions">
+    Students type questions into the chatbot. Courser finds the most relevant lecture segments and generates a cited answer using GPT-3.5-turbo.
+  </Step>
+  <Step title="Citations link back to the lecture">
+    Every answer includes timestamped links to the exact moments in the lecture videos where the information comes from.
+  </Step>
+</Steps>
+
+## Key features
+
+- **YouTube lecture ingestion** — Automatically fetches captions from any YouTube video
+- **Semantic search** — Vector similarity search via Pinecone surfaces the most relevant content
+- **Cited answers** — Every response includes timestamped YouTube links back to the source
+- **Embeddable widget** — Share a public link that works anywhere — Canvas, Blackboard, or a course website
+- **Fully customizable** — Set a custom chatbot name, color, background image, placeholder text, and AI instructions
+- **Bring your own key** — Use your own OpenAI API key per course, or rely on the platform default
+- **Conversation export** — Download student Q&A history as CSV for analysis
+- **Email & Google auth** — Professors sign in with email/password or Google OAuth
+
+## Tech stack
+
+| Component | Technology |
+|---|---|
+| Backend | Node.js + Express |
+| Database | MongoDB (via Mongoose) |
+| Vector database | Pinecone |
+| AI / LLM | OpenAI GPT-3.5-turbo + LlamaIndex |
+| Embeddings | OpenAI `text-embedding-ada-002` |
+| Auth | Firebase + JWT |
+| Frontend | Next.js + Tailwind CSS |
+| File storage | Cloudinary |

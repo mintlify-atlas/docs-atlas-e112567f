@@ -1,0 +1,83 @@
+---
+title: API overview
+description: Overview of the Courser REST API, base URLs, authentication, and available endpoints.
+---
+
+The Courser API is a REST API that lets you build and interact with AI-powered course chatbots. All requests and responses use JSON.
+
+## Base URL
+
+<CodeGroup>
+
+```bash Local development
+http://localhost:8000
+```
+
+```bash Production
+https://your-deployed-url.com
+```
+
+</CodeGroup>
+
+<Info>
+Replace `https://your-deployed-url.com` with the URL of your deployed Courser instance.
+</Info>
+
+## Authentication
+
+The Courser API uses JWT (JSON Web Token) bearer authentication. Once you obtain a token via any auth endpoint, pass it with every authenticated request using the header below.
+
+```
+x-access'courser-auth-token: <your_jwt_token>
+```
+
+<Warning>
+The header name contains an apostrophe: `x-access'courser-auth-token`. This is intentional and must be sent exactly as shown.
+</Warning>
+
+Tokens are valid for **1000 days** from the time of issue. See the [Authentication](/api/authentication) page for full details.
+
+## Endpoints
+
+### Auth — `/auth/*`
+
+| Method | Path | Auth required | Description |
+|--------|------|--------------|-------------|
+| `POST` | `/auth/google` | No | Sign in or register with Google OAuth |
+| `POST` | `/auth/signup-email` | No | Register a new account with email and password |
+| `POST` | `/auth/login-email` | No | Sign in with email and password |
+| `GET` | `/auth/isloggedin` | Yes | Verify a token and return the authenticated user's profile |
+
+### Chatbot — `/chatbot/*`
+
+| Method | Path | Auth required | Description |
+|--------|------|--------------|-------------|
+| — | — | — | See Chatbot API reference |
+
+### Course — `/course/*`
+
+| Method | Path | Auth required | Description |
+|--------|------|--------------|-------------|
+| — | — | — | See Course API reference |
+
+## Error responses
+
+| Status | Meaning |
+|--------|---------|
+| `401` | Unauthorized — missing, invalid, or expired token, or no matching user |
+| `409` | Conflict — a resource with the same identifier (e.g. email address) already exists |
+| `500` | Internal server error — an unexpected error occurred on the server |
+
+## API sections
+
+<Columns cols={3}>
+  <Card title="Auth" icon="key" href="/api/authentication">
+    JWT authentication, token acquisition, and user session management.
+  </Card>
+  <Card title="Chatbot" icon="message-circle" href="/api/chatbot">
+    Create and interact with AI chatbots trained on lecture videos.
+  </Card>
+  <Card title="Course" icon="book-open" href="/api/course">
+    Manage courses, upload YouTube videos, and configure chatbot behavior.
+  </Card>
+</Columns>

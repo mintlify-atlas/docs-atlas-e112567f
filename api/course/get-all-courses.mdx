@@ -1,0 +1,89 @@
+---
+title: Get all courses
+description: Retrieve all courses belonging to the authenticated user.
+api: GET /course/getAllCourses
+---
+
+Returns an array of all courses owned by the currently authenticated user. Authentication is required.
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  Your JWT authentication token.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+<ResponseField name="courses" type="object[]" required>
+  An array of course objects owned by the authenticated user.
+
+  <Expandable title="Course properties">
+    <ResponseField name="_id" type="string">
+      Unique identifier for the course.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      The course display name.
+    </ResponseField>
+    <ResponseField name="instructions" type="string">
+      The AI system prompt used by the course chatbot.
+    </ResponseField>
+    <ResponseField name="color" type="string">
+      The chatbot accent color as a hex string.
+    </ResponseField>
+    <ResponseField name="placeholder" type="string">
+      The input field hint text shown in the chatbot UI.
+    </ResponseField>
+    <ResponseField name="backgroundImg" type="string">
+      URL of the chatbot background image.
+    </ResponseField>
+    <ResponseField name="openAIAssistantID" type="string">
+      The OpenAI assistant ID for this course.
+    </ResponseField>
+    <ResponseField name="openAIFiles" type="string[]">
+      IDs of files uploaded to OpenAI for retrieval.
+    </ResponseField>
+    <ResponseField name="transcriptions" type="string[]">
+      Array of Transcription document IDs for the course's processed videos.
+    </ResponseField>
+    <ResponseField name="sourceFiles" type="string[]">
+      Array of source file paths or identifiers.
+    </ResponseField>
+    <ResponseField name="openAIKey" type="string">
+      Custom OpenAI API key for this course, if set.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url http://localhost:8000/course/getAllCourses \
+  --header "x-access'courser-auth-token: <your_jwt_token>"
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "courses": [
+    {
+      "_id": "64f1a2b3c4d5e6f7a8b9c0d1",
+      "name": "Introduction to Marine Biology",
+      "instructions": "You are a helpful AI assistant for a University classroom that answers questions for students about this course",
+      "color": "#fecc4e",
+      "placeholder": "What is significant about horseshoe crabs",
+      "backgroundImg": "https://res.cloudinary.com/dlk3ezbal/image/upload/v1699589098/jqmlca7vhr0cnzgdbaah.png",
+      "openAIAssistantID": "asst_abc123xyz",
+      "openAIFiles": ["file-abc123"],
+      "transcriptions": ["64f1a2b3c4d5e6f7a8b9c0d2"],
+      "sourceFiles": [],
+      "openAIKey": ""
+    }
+  ]
+}
+```

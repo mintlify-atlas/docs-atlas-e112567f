@@ -1,0 +1,65 @@
+---
+title: Dataset export
+description: Download a CSV file of recent student conversations for a course.
+api: GET /chatbot/{courseId}/dataset/export
+---
+
+Exports recent student conversations for a course as a CSV file download. Use this endpoint to build fine-tuning datasets or review chatbot performance. Authentication is required.
+
+## Request headers
+
+<ParamField header="x-access'courser-auth-token" type="string" required>
+  Your JWT authentication token.
+</ParamField>
+
+## Path parameters
+
+<ParamField path="courseId" type="string" required>
+  The ID of the course to export conversations for.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="limit" type="number" default="50">
+  Maximum number of conversations to include in the export. The value is clamped to the range **10–100** — values below 10 are raised to 10, and values above 100 are lowered to 100. Defaults to `50` if omitted or not a valid number.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+Returns a CSV file attachment. Conversations are ordered from most recent to oldest.
+
+**Response headers:**
+
+| Header | Value |
+|--------|-------|
+| `Content-Type` | `text/csv` |
+| `Content-Disposition` | `attachment; filename="dataset-{courseId}-{timestamp}.csv"` |
+
+**CSV columns:**
+
+| Column | Description |
+|--------|-------------|
+| `Start Time` | ISO timestamp of when the conversation was recorded |
+| `User Question` | The student's original message |
+| `Assistant Answer` | The AI assistant's response |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url 'http://localhost:8000/chatbot/64f1a2b3c4d5e6f7a8b9c0d1/dataset/export?limit=100' \
+  --header "x-access'courser-auth-token: <your_jwt_token>" \
+  --output dataset.csv
+```
+
+</CodeGroup>
+
+```csv 200
+Start Time,User Question,Assistant Answer
+2024-11-15T14:23:01.000Z,What is the significance of horseshoe crabs?,"Horseshoe crabs are significant because their blood is used to detect bacterial endotoxins in medical devices and vaccines."
+2024-11-15T13:05:44.000Z,How does photosynthesis work?,"Photosynthesis is the process by which plants convert sunlight into chemical energy stored as glucose."
+```

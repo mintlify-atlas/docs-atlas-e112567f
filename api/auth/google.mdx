@@ -1,0 +1,77 @@
+---
+title: Sign in with Google
+description: Authenticate or register a user using a Google OAuth ID token.
+api: POST /auth/google
+---
+
+Authenticates a user with a Google OAuth `idToken`. If no account exists for the given token, a new user is created. Returns a JWT token on success.
+
+<Note>
+This endpoint does not require authentication.
+</Note>
+
+## Request body
+
+<ParamField body="idToken" type="string" required>
+  The Google OAuth ID token obtained from the Firebase Google sign-in flow. This value is hashed (SHA-256, truncated to 24 hex chars) to derive the user's internal ID.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  The user's email address as returned by Google. Used to detect duplicate accounts registered via a different method.
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  The user's display name as returned by Google. Stored on the user record when creating a new account.
+</ParamField>
+
+## Response
+
+### 200 — Success
+
+Returned whether the user already existed or was newly created.
+
+<ResponseField name="token" type="string" required>
+  A signed JWT valid for 1000 days. Pass this value in the `x-access'courser-auth-token` header on authenticated requests.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Always `"Login successful"`.
+</ResponseField>
+
+### 409 — Email already in use
+
+Returned when a different account (registered without Google) already uses the same email address.
+
+<ResponseField name="message" type="string">
+  `"Email already in use"`
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url http://localhost:8000/auth/google \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "idToken": "eyJhbGciOiJSUzI1NiIs...",
+    "email": "professor@university.edu",
+    "name": "Dr. Jane Smith"
+  }'
+```
+
+</CodeGroup>
+
+```json 200
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "message": "Login successful"
+}
+```
+
+```json 409
+{
+  "message": "Email already in use"
+}
+```
